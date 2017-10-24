@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  jekyll-builder:
+    image: cethy/alpine-jekyll:v1.0
+    volumes:
+      - ./source:/var/_source
+      - ./_site:/var/_site # OUTPUT_DIR
+    command: watch
+
+  nginx-proxy:
+    image: cethy/apline-nginx-livereload-injection:v1.0
+    ports:
+      - "8008:80"
+    volumes:
+      - "./_site:/usr/share/nginx/html"
+
+  livereload:
+    image: cethy/alpine-livereload:v1.0
+    ports:
+      - "35729:35729"
+    volumes:
+      - ./_site:/usr/src/livereload-watch  # OUTPUT_DIR
+    command: "/usr/src/livereload-watch -u true -d --exts 'css,js,html'"
